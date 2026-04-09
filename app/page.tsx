@@ -92,30 +92,18 @@ export default function Local3DPrintingSite() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#1e1b4b,_#111827_45%,_#0f172a_100%)] text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.22),_transparent_30%),radial-gradient(circle_at_left,_rgba(168,85,247,0.16),_transparent_25%)]" />
-        <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-28">
+        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="grid gap-12 md:grid-cols-2 md:items-center">
             <div>
-              <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 p-2 ring-1 ring-white/15 shadow-lg backdrop-blur">
-                  <div className="relative h-10 w-10">
-                    <div className="absolute left-0 right-0 top-0 h-3 rounded-lg bg-gradient-to-r from-sky-400 to-blue-500" />
-                    <div className="absolute left-0 right-0 top-3.5 h-3 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500" />
-                    <div className="absolute left-0 right-0 top-7 h-3 rounded-lg bg-gradient-to-r from-indigo-500 to-fuchsia-500" />
-                  </div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold tracking-wide text-white">STRATHAVEN PRINTS</div>
-                  <div className="text-xs uppercase tracking-[0.22em] text-blue-200">Custom 3D Printing</div>
-                </div>
-              </div>
+              
 
-              <h1 className="text-5xl font-bold leading-tight md:text-6xl">
+              <h1 className="max-w-3xl text-5xl font-bold leading-[0.95] md:text-7xl">
                 Custom parts, fixes, and personalised 3D prints.
               </h1>
-              <p className="mt-4 max-w-2xl text-xl font-medium text-blue-100">
+              <p className="mt-5 max-w-2xl text-xl font-medium leading-8 text-blue-100 md:text-2xl">
                 Local 3D printing in Strathaven, including custom jobs, STL printing, and personalised designs.
               </p>
-              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
+              <p className="mt-5 max-w-xl text-base leading-8 text-slate-300">
                 From broken parts to prints you’ve found online, send over what you need and I’ll let you know what’s possible.
               </p>
 
