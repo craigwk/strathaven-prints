@@ -496,6 +496,9 @@ export default function Local3DPrintingSite() {
 
       <footer className="px-6 pb-10 pt-4 text-center text-sm text-slate-400">
         © 2026 Strathaven Prints. Custom prints, replacement parts, and personalised designs.
+		<p className="mt-2 text-xs text-slate-500">
+  Based in Strathaven, South Lanarkshire. Serving surrounding areas.
+</p>
       </footer>
     </div>
   );
