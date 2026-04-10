@@ -33,7 +33,14 @@ const galleryItems = fs.readdirSync(galleryBase)
       images,
     };
   })
-  .filter(Boolean);
+  .filter(
+    (
+      item
+    ): item is {
+      category: string;
+      images: { src: string; title: string }[];
+    } => item !== null
+  );
 
 const services = [
   "Custom 3D printed solutions",
