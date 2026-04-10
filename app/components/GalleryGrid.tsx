@@ -61,12 +61,10 @@ export default function GalleryGrid({ items }: GalleryGridProps) {
                 : message;
 
             descriptionBox.focus();
+
+            const end = descriptionBox.value.length;
+            descriptionBox.setSelectionRange(end, end);
         }
-
-        // put cursor at end
-        const end = descriptionBox.value.length;
-        descriptionBox.setSelectionRange(end, end);
-
 
         if (quoteSection) {
             quoteSection.scrollIntoView({ behavior: "smooth", block: "start" });
