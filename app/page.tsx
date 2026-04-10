@@ -1,21 +1,54 @@
-// VERSION: v1 - first stable build (FULL CLEAN RESET)
-export default function Local3DPrintingSite() {
-  const galleryItems = [
-    { title: "Custom Household Fixes", desc: "Solving real problems with simple printed parts." },
-    { title: "Replacement Parts", desc: "Hard-to-source parts recreated to extend product life." },
-    { title: "Personalised Prints", desc: "Name signs, tags, and custom gifts." },
-    { title: "STL Prints", desc: "Anything you’ve found online — printed locally." },
-  ];
+import fs from "fs";
+import path from "path";
+import GalleryGrid from "./components/GalleryGrid";
 
-  const services = [
-    "Custom 3D printed solutions",
-    "Replacement parts and fixes",
-    "Name personalised prints (signs, tags, gifts)",
-    "Print STL files you already have or have found online",
-    "Personalise or adapt existing designs",
-    "Small design-to-print jobs",
-    "Local collection, delivery, and part pickup for reference",
-  ];
+
+// VERSION: v1 - first stable build (FULL CLEAN RESET)
+
+const galleryBase = path.join(process.cwd(), "public", "gallery");
+
+const galleryItems = fs.readdirSync(galleryBase)
+  .map((folder) => {
+    const folderPath = path.join(galleryBase, folder);
+
+    if (!fs.statSync(folderPath).isDirectory()) return null;
+
+    const images = fs
+      .readdirSync(folderPath)
+      .filter((file) => /\.(jpg|jpeg|png|webp)$/i.test(file))
+      .map((file) => ({
+        src: `/gallery/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`,
+        title: file.replace(/\.[^/.]+$/, ""),
+      }));
+
+    if (images.length === 0) return null;
+
+    const category = folder
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+
+    return {
+      category,
+      images,
+    };
+  })
+  .filter(Boolean);
+
+const services = [
+  "Custom 3D printed solutions",
+  "Replacement parts and fixes",
+  "Name personalised prints (signs, tags, gifts)",
+  "Print STL files you already have or have found online",
+  "Personalise or adapt existing designs",
+  "Small design-to-print jobs",
+  "Local collection, delivery, and part pickup for reference",
+];
+
+export default function Local3DPrintingSite() {
+
+
+
 
   const processSteps = [
     {
@@ -306,33 +339,33 @@ export default function Local3DPrintingSite() {
       </section>
 
       <section className="relative mx-auto max-w-6xl px-6 py-12">
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(96,165,250,0.08),transparent_35%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(96,165,250,0.08),transparent_35%)]" />
 
-  <div className="relative">
-    <div className="mb-8">
-      <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Pricing guide</p>
-      <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
-        Typical pricing
-      </h2>
-      <p className="mt-3 max-w-3xl text-slate-300">
-        Final pricing depends on size, print time, material, and whether any design work is needed, but these guide prices help give a rough idea.
-      </p>
-    </div>
+        <div className="relative">
+          <div className="mb-8">
+            <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Pricing guide</p>
+            <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
+              Typical pricing
+            </h2>
+            <p className="mt-3 max-w-3xl text-slate-300">
+              Final pricing depends on size, print time, material, and whether any design work is needed, but these guide prices help give a rough idea.
+            </p>
+          </div>
 
-    <div className="grid gap-6 md:grid-cols-3">
-      {pricingGuide.map((item) => (
-        <div
-          key={item.title}
-          className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-md"
-        >
-          <div className="text-sm uppercase tracking-[0.16em] text-blue-200">{item.title}</div>
-          <div className="mt-3 text-3xl font-bold text-white">{item.price}</div>
-          <p className="mt-3 text-sm leading-6 text-slate-300">{item.desc}</p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {pricingGuide.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-md"
+              >
+                <div className="text-sm uppercase tracking-[0.16em] text-blue-200">{item.title}</div>
+                <div className="mt-3 text-3xl font-bold text-white">{item.price}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       <section id="gallery" className="relative mx-auto max-w-6xl px-6 py-12">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(96,165,250,0.06),transparent_35%)]" />
@@ -346,26 +379,11 @@ export default function Local3DPrintingSite() {
               </h2>
             </div>
             <p className="max-w-2xl text-slate-300">
-              Replace these placeholders with photos of finished prints, problem-solving parts, and before-and-after examples.
+              Real examples of finished prints, problem-solving parts, and before-and-after fixes.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {galleryItems.map((item) => (
-              <div
-                key={item.title}
-                className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md"
-              >
-                <div className="flex h-48 items-center justify-center bg-white/5 text-slate-400">
-                  Add photo here
-                </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-semibold">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <GalleryGrid items={galleryItems} />
         </div>
       </section>
 
@@ -383,6 +401,7 @@ export default function Local3DPrintingSite() {
             </p>
 
             <form
+              id="quote-form"
               action="https://formspree.io/f/xbdpezrk"
               method="POST"
               className="mt-8 grid gap-4"
@@ -402,6 +421,7 @@ export default function Local3DPrintingSite() {
               />
 
               <textarea
+                id="job_description"
                 name="job_description"
                 placeholder="What do you need made? Add a link to a file/photo if you have one, or leave blank for now."
                 className="h-28 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -445,12 +465,21 @@ export default function Local3DPrintingSite() {
                 className="h-24 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
-              <button
-                type="submit"
-                className="mt-4 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-3 font-medium text-white shadow-lg transition hover:scale-[1.02]"
-              >
-                Send request
-              </button>
+              <div className="mt-4 flex gap-3">
+                <button
+                  type="submit"
+                  className="flex-1 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-3 font-medium text-white shadow-lg transition hover:scale-[1.02]"
+                >
+                  Send request
+                </button>
+
+                <button
+                  type="reset"
+                  className="rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm text-white transition hover:bg-white/10"
+                >
+                  Clear
+                </button>
+              </div>
             </form>
           </div>
 
@@ -473,80 +502,80 @@ export default function Local3DPrintingSite() {
         </div>
       </section>
 
-     <section id="contact" className="relative mx-auto max-w-6xl px-6 py-12">
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.08),transparent_35%)]" />
+      <section id="contact" className="relative mx-auto max-w-6xl px-6 py-12">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.08),transparent_35%)]" />
 
-  <div className="relative grid gap-8 md:grid-cols-[1.1fr,0.9fr]">
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
-      <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Contact</p>
-      <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
-        Get a quote or ask a question
-      </h2>
-      <p className="mt-4 max-w-2xl text-slate-300">
-        The easiest way is to send a quick message with a description of the problem, what the part needs to do, and any useful dimensions or photos. If you already have an STL file or have found a design online, that works too.
-      </p>
-    </div>
+        <div className="relative grid gap-8 md:grid-cols-[1.1fr,0.9fr]">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+            <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Contact</p>
+            <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
+              Get a quote or ask a question
+            </h2>
+            <p className="mt-4 max-w-2xl text-slate-300">
+              The easiest way is to send a quick message with a description of the problem, what the part needs to do, and any useful dimensions or photos. If you already have an STL file or have found a design online, that works too.
+            </p>
+          </div>
 
-    <div className="relative">
-      <div className="absolute -inset-4 rounded-3xl bg-blue-500/10 blur-2xl" />
-      <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500 to-indigo-500 p-8 text-white shadow-2xl">
-        <h3 className="text-2xl font-bold">Ask a quick question</h3>
-        <p className="mt-4 text-blue-50">
-          Not ready for a full quote? Send a quick message and I’ll get back to you. Prefer Facebook Messenger? That works too.
-        </p>
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-3xl bg-blue-500/10 blur-2xl" />
+            <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500 to-indigo-500 p-8 text-white shadow-2xl">
+              <h3 className="text-2xl font-bold">Ask a quick question</h3>
+              <p className="mt-4 text-blue-50">
+                Not ready for a full quote? Send a quick message and I’ll get back to you. Prefer Facebook Messenger? That works too.
+              </p>
 
-        <form
-          action="https://formspree.io/f/xbdpezrk"
-          method="POST"
-          className="mt-6 grid gap-4"
-        >
-          <input type="hidden" name="form_type" value="quick_question" />
-          <input
-            name="name"
-            placeholder="Your name"
-            className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
-          />
-          <input
-            name="contact"
-            placeholder="Email or phone"
-            className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
-          />
-          <textarea
-            name="message"
-            placeholder="Ask a question or describe what you need"
-            className="h-32 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
-          />
-          <button
-            type="submit"
-            className="mt-2 inline-block rounded-2xl bg-white px-5 py-3 font-medium text-indigo-900 transition hover:scale-[1.02]"
-          >
-            Send message
-          </button>
-        </form>
+              <form
+                action="https://formspree.io/f/xbdpezrk"
+                method="POST"
+                className="mt-6 grid gap-4"
+              >
+                <input type="hidden" name="form_type" value="quick_question" />
+                <input
+                  name="name"
+                  placeholder="Your name"
+                  className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
+                />
+                <input
+                  name="contact"
+                  placeholder="Email or phone"
+                  className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
+                />
+                <textarea
+                  name="message"
+                  placeholder="Ask a question or describe what you need"
+                  className="h-32 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
+                />
+                <button
+                  type="submit"
+                  className="mt-2 inline-block rounded-2xl bg-white px-5 py-3 font-medium text-indigo-900 transition hover:scale-[1.02]"
+                >
+                  Send message
+                </button>
+              </form>
 
-        <p className="mt-4 text-sm text-blue-100/80">Fastest response via Messenger or WhatsApp</p>
+              <p className="mt-4 text-sm text-blue-100/80">Fastest response via Messenger or WhatsApp</p>
 
-        <a
-          href="https://m.me/61586250437570"
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 inline-block rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/20"
-        >
-          Message on Facebook
-        </a>
+              <a
+                href="https://m.me/61586250437570"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-block rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/20"
+              >
+                Message on Facebook
+              </a>
 
-        <a
-          href="https://wa.me/447368607524"
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-block rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/20"
-        >
-          Message on WhatsApp
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+              <a
+                href="https://wa.me/447368607524"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-block rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/20"
+              >
+                Message on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <footer className="px-6 pb-10 pt-4 text-center text-sm text-slate-400">
         © 2026 Strathaven Prints. Custom prints, replacement parts, and personalised designs.
