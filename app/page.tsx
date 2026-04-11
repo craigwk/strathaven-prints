@@ -15,10 +15,10 @@ const galleryItems = fs.readdirSync(galleryBase)
 
     const descriptionsPath = path.join(folderPath, "descriptions.json");
 
-    let descriptions = {};
+    let descriptions: Record<string, string> = {};
     if (fs.existsSync(descriptionsPath)) {
       try {
-        descriptions = JSON.parse(fs.readFileSync(descriptionsPath, "utf8"));
+        descriptions = JSON.parse(fs.readFileSync(descriptionsPath, "utf8")) as Record<string, string>;
       } catch {
         descriptions = {};
       }
