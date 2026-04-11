@@ -13,13 +13,32 @@ const galleryItems = fs.readdirSync(galleryBase)
 
     if (!fs.statSync(folderPath).isDirectory()) return null;
 
+    const descriptionsPath = path.join(folderPath, "descriptions.json");
+
+    let descriptions = {};
+    if (fs.existsSync(descriptionsPath)) {
+      try {
+        descriptions = JSON.parse(fs.readFileSync(descriptionsPath, "utf8"));
+      } catch {
+        descriptions = {};
+      }
+    }
+
     const images = fs
       .readdirSync(folderPath)
       .filter((file) => /\.(jpg|jpeg|png|webp)$/i.test(file))
-      .map((file) => ({
-        src: `/gallery/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`,
-        title: file.replace(/\.[^/.]+$/, ""),
-      }));
+      .map((file) => {
+        const title = file.replace(/\.[^/.]+$/, "");
+
+        return {
+          src: `/gallery/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`,
+          title,
+          description:
+            typeof descriptions[title] === "string"
+              ? descriptions[title]
+              : "",
+        };
+      });
 
     if (images.length === 0) return null;
 
@@ -38,7 +57,7 @@ const galleryItems = fs.readdirSync(galleryBase)
       item
     ): item is {
       category: string;
-      images: { src: string; title: string }[];
+      images: { src: string; title: string; description: string }[];
     } => item !== null
   );
 
@@ -132,17 +151,24 @@ export default function Local3DPrintingSite() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#1e1b4b,_#111827_45%,_#0f172a_100%)] text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.22),_transparent_30%),radial-gradient(circle_at_left,_rgba(168,85,247,0.16),_transparent_25%)]" />
+
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <div className="grid gap-12 md:grid-cols-2 md:items-center">
+          <div className="grid gap-10 md:grid-cols-[1.05fr,0.95fr] md:items-center">
             <div>
-              <h1 className="max-w-3xl text-5xl font-bold leading-[0.92] md:text-7xl">
+              <div className="mb-4 inline-flex rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-medium tracking-wide text-blue-200 backdrop-blur-sm">
+                Local 3D printing in Strathaven
+              </div>
+
+              <h1 className="max-w-3xl text-5xl font-bold leading-[0.9] md:text-7xl">
                 Custom parts, fixes, and personalised 3D prints.
               </h1>
+
               <p className="mt-5 max-w-2xl text-lg font-medium leading-7 text-blue-100 md:text-xl">
-                Local 3D printing in Strathaven, including custom jobs, STL printing, and personalised designs.
+                From one-off problem-solving parts to prints from STL files, I help turn ideas, fixes, and replacements into finished parts that actually work.
               </p>
-              <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">
-                From broken parts to prints you’ve found online, send over what you need and I’ll let you know what’s possible.
+
+              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
+                Ideal for broken clips, custom-fit parts, replacement pieces, personalised prints, and simple prototypes — all printed locally with straightforward advice and quick turnaround.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -152,11 +178,12 @@ export default function Local3DPrintingSite() {
                 >
                   Get a quote
                 </a>
+
                 <a
                   href="#gallery"
                   className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-medium text-white transition hover:bg-white/10"
                 >
-                  View work
+                  View examples
                 </a>
               </div>
 
@@ -168,10 +195,13 @@ export default function Local3DPrintingSite() {
                   <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
                     Carbon fibre & nylon materials
                   </span>
+                  <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
+                    Local collection & delivery
+                  </span>
                 </div>
 
-                <div className="max-w-md text-sm text-slate-300">
-                  Used for clips, brackets, mounts, covers and everyday parts that need to actually work.
+                <div className="max-w-md text-sm leading-6 text-slate-300">
+                  Used for clips, brackets, mounts, covers and everyday parts that need to do the job properly.
                 </div>
               </div>
             </div>
@@ -189,13 +219,14 @@ export default function Local3DPrintingSite() {
                 </ul>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/10 to-fuchsia-500/10 p-7 shadow-2xl backdrop-blur-md">
+              <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/12 to-fuchsia-500/10 p-7 shadow-2xl backdrop-blur-md">
                 <div className="mb-4 text-sm font-medium text-blue-200">Ideal for</div>
                 <ul className="space-y-3.5 text-slate-100">
                   {[
                     "Broken parts that are difficult or impossible to source",
                     "Small jobs that need a custom fit",
-                    "Quick prototypes and simple ideas brought to life",
+                    "Prints from files you already have",
+                    "Simple ideas and prototypes brought to life",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="mt-1.5 h-2.5 w-2.5 rounded-full bg-blue-300 flex-shrink-0" />

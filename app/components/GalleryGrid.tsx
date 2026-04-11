@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 type GalleryImage = {
     src: string;
     title: string;
+    description: string;
 };
 
 type GalleryCategory = {
@@ -137,13 +138,19 @@ export default function GalleryGrid({ items }: GalleryGridProps) {
                                             imageIndex,
                                         })
                                     }
-                                    className="flex-shrink-0 overflow-hidden rounded-xl focus:outline-none"
+                                    className="group relative flex-shrink-0 overflow-hidden rounded-xl focus:outline-none cursor-pointer"
                                 >
                                     <img
                                         src={img.src}
                                         alt={img.title}
-                                        className="h-40 w-60 object-cover transition hover:opacity-90"
+                                        className="h-40 w-60 object-cover transition duration-300 ease-out group-hover:scale-[1.05] group-hover:opacity-90"
                                     />
+
+                                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/15">
+                                        <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur-sm transition duration-300 group-hover:opacity-100">
+                                            View
+                                        </span>
+                                    </div>
                                 </button>
                             ))}
                         </div>
@@ -199,12 +206,11 @@ export default function GalleryGrid({ items }: GalleryGridProps) {
                                     {selectedData.category.category}
                                 </div>
 
-                                <div className="mt-1 text-sm text-slate-200">
-                                    {selectedData.image.title
-                                        .split("-")
-                                        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                                        .join(" ")}
-                                </div>
+                                {selectedData.image.description && (
+                                    <p className="mt-3 max-w-xl text-center text-sm text-slate-300">
+                                        {selectedData.image.description}
+                                    </p>
+                                )}
 
                                 <div className="mt-1 text-xs text-slate-400">
                                     {selected.imageIndex + 1} / {selectedData.category.images.length}
