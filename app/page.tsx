@@ -135,17 +135,17 @@ export default function Local3DPrintingSite() {
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="grid gap-12 md:grid-cols-2 md:items-center">
             <div>
-              <h1 className="max-w-3xl text-5xl font-bold leading-[0.95] md:text-7xl">
+              <h1 className="max-w-3xl text-5xl font-bold leading-[0.92] md:text-7xl">
                 Custom parts, fixes, and personalised 3D prints.
               </h1>
-              <p className="mt-5 max-w-2xl text-xl font-medium leading-8 text-blue-100 md:text-2xl">
+              <p className="mt-5 max-w-2xl text-lg font-medium leading-7 text-blue-100 md:text-xl">
                 Local 3D printing in Strathaven, including custom jobs, STL printing, and personalised designs.
               </p>
-              <p className="mt-5 max-w-xl text-base leading-8 text-slate-300">
+              <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">
                 From broken parts to prints you’ve found online, send over what you need and I’ll let you know what’s possible.
               </p>
 
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-wrap gap-4">
                 <a
                   href="#quote"
                   className="rounded-2xl bg-white px-6 py-3 font-medium text-slate-900 shadow-lg transition hover:scale-[1.02]"
@@ -160,7 +160,7 @@ export default function Local3DPrintingSite() {
                 </a>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3">
+              <div className="mt-5 flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-3 text-xs">
                   <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
                     Strong functional parts available
@@ -170,32 +170,39 @@ export default function Local3DPrintingSite() {
                   </span>
                 </div>
 
-                <div className="text-sm text-slate-300 max-w-md">
+                <div className="max-w-md text-sm text-slate-300">
                   Used for clips, brackets, mounts, covers and everyday parts that need to actually work.
                 </div>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-md">
-                <div className="mb-3 text-sm text-blue-200">What I can help with</div>
-                <ul className="space-y-3 text-slate-100">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-7 shadow-2xl backdrop-blur-md">
+                <div className="mb-4 text-sm font-medium text-blue-200">What I can help with</div>
+                <ul className="space-y-3.5 text-slate-100">
                   {services.map((item) => (
                     <li key={item} className="flex items-start gap-3">
-                      <span className="mt-2 h-2 w-2 rounded-full bg-blue-300" />
-                      <span>{item}</span>
+                      <span className="mt-1.5 h-2.5 w-2.5 rounded-full bg-blue-300 flex-shrink-0" />
+                      <span className="leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/15 to-fuchsia-500/10 p-6 shadow-2xl backdrop-blur-md">
-                <div className="text-sm text-blue-200">Ideal for</div>
-                <div className="mt-4 space-y-4 text-slate-100">
-                  <p>Broken parts that are difficult or impossible to source</p>
-                  <p>Small jobs that need a custom fit</p>
-                  <p>Quick prototypes and simple ideas brought to life</p>
-                </div>
+              <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/10 to-fuchsia-500/10 p-7 shadow-2xl backdrop-blur-md">
+                <div className="mb-4 text-sm font-medium text-blue-200">Ideal for</div>
+                <ul className="space-y-3.5 text-slate-100">
+                  {[
+                    "Broken parts that are difficult or impossible to source",
+                    "Small jobs that need a custom fit",
+                    "Quick prototypes and simple ideas brought to life",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-1.5 h-2.5 w-2.5 rounded-full bg-blue-300 flex-shrink-0" />
+                      <span className="leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
