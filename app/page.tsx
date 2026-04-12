@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import GalleryGrid from "./components/GalleryGrid";
+import ProductGrid from "./components/ProductGrid";
 
 
 // VERSION: v1 - first stable build (FULL CLEAN RESET)
@@ -58,6 +59,80 @@ const galleryItems = fs.readdirSync(galleryBase)
     ): item is {
       category: string;
       images: { src: string; title: string; description: string }[];
+    } => item !== null
+  );
+
+const productsBase = path.join(process.cwd(), "public", "products");
+
+const productItems = fs.readdirSync(productsBase)
+  .map((folder) => {
+    const folderPath = path.join(productsBase, folder);
+
+    if (!fs.statSync(folderPath).isDirectory()) return null;
+
+    const descriptionsPath = path.join(folderPath, "descriptions.json");
+
+    let descriptions: Record<
+      string,
+      { title?: string; description?: string; price?: string }
+    > = {};
+
+    if (fs.existsSync(descriptionsPath)) {
+      try {
+        descriptions = JSON.parse(
+          fs.readFileSync(descriptionsPath, "utf8")
+        ) as Record<
+          string,
+          { title?: string; description?: string; price?: string }
+        >;
+      } catch {
+        descriptions = {};
+      }
+    }
+
+    const images = fs
+      .readdirSync(folderPath)
+      .filter((file) => /\.(jpg|jpeg|png|webp)$/i.test(file))
+      .map((file) => {
+        const key = file.replace(/\.[^/.]+$/, "");
+        const meta = descriptions[key] || {};
+
+        return {
+          src: `/products/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`,
+          title:
+            typeof meta.title === "string" && meta.title.trim()
+              ? meta.title
+              : key,
+          description:
+            typeof meta.description === "string" ? meta.description : "",
+          price:
+            typeof meta.price === "string" ? meta.price : "",
+        };
+      });
+
+    if (images.length === 0) return null;
+
+    const category = folder
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+
+    return {
+      category,
+      images,
+    };
+  })
+  .filter(
+    (
+      item
+    ): item is {
+      category: string;
+      images: {
+        src: string;
+        title: string;
+        description: string;
+        price: string;
+      }[];
     } => item !== null
   );
 
@@ -153,7 +228,7 @@ export default function Local3DPrintingSite() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.22),_transparent_30%),radial-gradient(circle_at_left,_rgba(168,85,247,0.16),_transparent_25%)]" />
 
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <div className="grid gap-10 md:grid-cols-[1.05fr,0.95fr] md:items-center">
+          <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <div className="mb-4 inline-flex rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-medium tracking-wide text-blue-200 backdrop-blur-sm">
                 Local 3D printing in Strathaven
@@ -197,6 +272,9 @@ export default function Local3DPrintingSite() {
                   </span>
                   <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
                     Local collection & delivery
+                  </span>
+                  <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
+                    Print models you find online
                   </span>
                 </div>
 
@@ -412,6 +490,25 @@ export default function Local3DPrintingSite() {
         </div>
       </section>
 
+      <section className="relative mx-auto max-w-6xl px-6 py-12">
+        <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
+              Products
+            </p>
+            <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
+              Ready to order
+            </h2>
+          </div>
+
+          <p className="max-w-2xl text-slate-300">
+            A selection of common items I can make quickly and customise. If you’ve seen something similar, just ask.
+          </p>
+        </div>
+
+        <ProductGrid items={productItems} />
+      </section>
+
       <section id="gallery" className="relative mx-auto max-w-6xl px-6 py-12">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(96,165,250,0.06),transparent_35%)]" />
 
@@ -429,6 +526,84 @@ export default function Local3DPrintingSite() {
           </div>
 
           <GalleryGrid items={galleryItems} />
+        </div>
+      </section>
+
+      <section className="relative mx-auto max-w-6xl px-6 py-12">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(96,165,250,0.08),transparent_35%)]" />
+
+        <div className="relative grid gap-8 md:grid-cols-2">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+            <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Print from online</p>
+            <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
+              Seen a model online you want printed?
+            </h2>
+            <p className="mt-4 max-w-2xl text-slate-300">
+              If you’ve found a design on a model site, send over the link and I can let you know if it’s suitable for printing, what material would work best, and how much it would cost.
+            </p>
+            <p className="mt-4 max-w-2xl text-slate-300">
+              This is ideal for novelty prints, practical organisers, replacement parts, desk items, articulated toys, and all the little things people come across online and want made locally.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href="https://www.printables.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white"
+              >
+                Browse Printables
+              </a>
+
+              <a
+                href="https://makerworld.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white"
+              >
+                Browse MakerWorld
+              </a>
+
+              <a
+                href="https://www.thingiverse.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white"
+              >
+                Browse Thingiverse
+              </a>
+            </div>
+
+            <div className="mt-6 flex">
+              <a
+                href="#quote"
+                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition hover:scale-[1.02]"
+              >
+                Send a model link →
+              </a>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/15 to-fuchsia-500/10 p-8 shadow-2xl backdrop-blur-md">
+            <h3 className="text-2xl font-bold">How it works</h3>
+            <ul className="mt-5 space-y-3 text-slate-200">
+              {[
+                "Find a model you like online",
+                "Send me the link or file",
+                "I’ll confirm if it’s suitable for printing",
+                "You get a local quote and lead time",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2.5 w-2.5 rounded-full bg-blue-300 flex-shrink-0" />
+                  <span className="leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-6 text-sm text-slate-300">
+              Customers should have the right to use any files or links they submit. I do not sell or distribute third-party designs unless permitted.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -468,7 +643,7 @@ export default function Local3DPrintingSite() {
               <textarea
                 id="job_description"
                 name="job_description"
-                placeholder="What do you need made? Add a link to a file/photo if you have one, or leave blank for now."
+                placeholder="What do you need made? Add a model link, file, photo, or rough description if you have one."
                 className="h-28 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
@@ -513,14 +688,14 @@ export default function Local3DPrintingSite() {
               <div className="mt-4 flex gap-3">
                 <button
                   type="submit"
-                  className="flex-1 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-3 font-medium text-white shadow-lg transition hover:scale-[1.02]"
+                  className="flex-1 cursor-pointer rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-3 font-medium text-white shadow-lg transition hover:scale-[1.02]"
                 >
                   Send request
                 </button>
 
                 <button
                   type="reset"
-                  className="rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm text-white transition hover:bg-white/10"
+                  className="cursor-pointer rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm text-white transition hover:bg-white/10"
                 >
                   Clear
                 </button>
@@ -566,7 +741,7 @@ export default function Local3DPrintingSite() {
             <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500 to-indigo-500 p-8 text-white shadow-2xl">
               <h3 className="text-2xl font-bold">Ask a quick question</h3>
               <p className="mt-4 text-blue-50">
-                Not ready for a full quote? Send a quick message and I’ll get back to you. Prefer Facebook Messenger? That works too.
+                Not ready for a full quote? Send a quick message and I’ll get back to you. If Facebook Messenger or WhatsApp is easier, that works too.
               </p>
 
               <form
@@ -592,35 +767,58 @@ export default function Local3DPrintingSite() {
                 />
                 <button
                   type="submit"
-                  className="mt-2 inline-block rounded-2xl bg-white px-5 py-3 font-medium text-indigo-900 transition hover:scale-[1.02]"
+                  className="mt-2 inline-block cursor-pointer rounded-2xl bg-white px-5 py-3 font-medium text-indigo-900 transition hover:scale-[1.02]"
                 >
                   Send message
                 </button>
               </form>
 
-              <p className="mt-4 text-sm text-blue-100/80">Fastest response via Messenger or WhatsApp</p>
+              <p className="mt-4 text-sm text-blue-100/80">
+                Fastest response via Messenger or WhatsApp
+              </p>
 
-              <a
-                href="https://m.me/61586250437570"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-block rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/20"
-              >
-                Message on Facebook
-              </a>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                {/* Facebook Messenger */}
+                <a
+                  href="https://m.me/61586250437570"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 flex-1 rounded-2xl border border-blue-400/30 bg-blue-500/10 px-5 py-3 font-medium text-blue-100 transition hover:bg-blue-600 hover:text-white hover:-translate-y-0.5 active:scale-[0.98]"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                  >
+                    <path d="M12 2C6.48 2 2 6.02 2 10.94c0 2.8 1.45 5.3 3.72 6.94V22l3.52-1.94c.94.26 1.94.4 3 .4 5.52 0 10-4.02 10-8.94S17.52 2 12 2zm1.06 12.34l-2.54-2.7-4.7 2.7 5.18-5.5 2.6 2.7 4.64-2.7-5.18 5.5z" />
+                  </svg>
+                  Message on Facebook
+                </a>
 
-              <a
-                href="https://wa.me/447368607524"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 inline-block rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/20"
-              >
-                Message on WhatsApp
-              </a>
+                {/* WhatsApp */}
+                <a
+                  href="https://wa.me/447368607524"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 flex-1 rounded-2xl border border-green-400/30 bg-green-500/10 px-5 py-3 font-medium text-green-100 transition hover:bg-green-600 hover:-translate-y-0.5 active:scale-[0.98]"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 32 32"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                  >
+                    <path d="M16.01 3C9.38 3 4 8.37 4 15c0 2.64.86 5.08 2.32 7.06L4 29l7.13-2.28A11.94 11.94 0 0016.01 27C22.64 27 28 21.63 28 15S22.64 3 16.01 3zm6.47 17.06c-.27.76-1.57 1.45-2.16 1.54-.55.08-1.25.12-2.02-.12-.47-.15-1.08-.35-1.86-.68-3.27-1.41-5.4-4.7-5.56-4.92-.15-.21-1.32-1.76-1.32-3.35 0-1.6.84-2.38 1.14-2.71.3-.33.65-.41.87-.41.22 0 .44 0 .63.01.2.01.46-.07.72.55.27.66.91 2.28.99 2.45.08.16.13.35.02.56-.1.21-.15.35-.3.53-.15.18-.31.4-.44.53-.15.15-.31.31-.13.61.18.3.8 1.32 1.72 2.13 1.18 1.05 2.17 1.38 2.47 1.53.3.15.47.13.65-.08.18-.21.76-.88.96-1.18.2-.3.41-.25.69-.15.27.1 1.73.82 2.02.97.3.15.5.22.57.34.07.12.07.7-.2 1.46z" />
+                  </svg>
+                  Message on WhatsApp
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+
+      </section >
 
       <footer className="px-6 pb-10 pt-4 text-center text-sm text-slate-400">
         © 2026 Strathaven Prints. Custom prints, replacement parts, and personalised designs.
@@ -628,6 +826,6 @@ export default function Local3DPrintingSite() {
           Based in Strathaven, South Lanarkshire. Serving surrounding areas.
         </p>
       </footer>
-    </div>
+    </div >
   );
 }

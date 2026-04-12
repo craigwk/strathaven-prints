@@ -1,7 +1,9 @@
 cd documents/strathavenprints
 
+npm run dev
+
 npm run sync-gallery
 
 git add .
-git commit -m "style and spacing updates"
+git commit -m ""
 git push

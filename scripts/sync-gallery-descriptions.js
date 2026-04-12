@@ -1,23 +1,42 @@
 const fs = require("fs");
 const path = require("path");
 
-const galleryBase = path.join(process.cwd(), "public", "gallery");
 const validExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+
+const roots = [
+    {
+        base: path.join(process.cwd(), "public", "gallery"),
+        mode: "gallery",
+    },
+    {
+        base: path.join(process.cwd(), "public", "products"),
+        mode: "products",
+    },
+];
 
 function getImageKey(filename) {
     return filename.replace(/\.[^/.]+$/, "");
 }
 
-function syncDescriptions() {
-    if (!fs.existsSync(galleryBase)) {
-        console.error(`Gallery folder not found: ${galleryBase}`);
-        process.exit(1);
+function toTitleCaseFromKey(key) {
+    return key
+        .replace(/[-_]+/g, " ")
+        .split(" ")
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+function syncFolder(basePath, mode) {
+    if (!fs.existsSync(basePath)) {
+        console.log(`Skipping missing folder: ${basePath}`);
+        return;
     }
 
-    const folders = fs.readdirSync(galleryBase);
+    const folders = fs.readdirSync(basePath);
 
     folders.forEach((folder) => {
-        const folderPath = path.join(galleryBase, folder);
+        const folderPath = path.join(basePath, folder);
 
         if (!fs.statSync(folderPath).isDirectory()) {
             return;
@@ -37,42 +56,102 @@ function syncDescriptions() {
 
         const imageFiles = fs
             .readdirSync(folderPath)
-            .filter((file) => validExtensions.includes(path.extname(file).toLowerCase()));
+            .filter((file) =>
+                validExtensions.includes(path.extname(file).toLowerCase())
+            );
 
         const imageKeys = imageFiles.map(getImageKey);
 
-        // Add missing keys
-        imageKeys.forEach((key) => {
-            if (!(key in descriptions)) {
-                descriptions[key] = "";
-            }
-        });
+        if (mode === "gallery") {
+            imageKeys.forEach((key) => {
+                if (!(key in descriptions)) {
+                    descriptions[key] = "";
+                }
+            });
 
-        // Remove keys for images that no longer exist
-        Object.keys(descriptions).forEach((key) => {
-            if (!imageKeys.includes(key)) {
-                delete descriptions[key];
-            }
-        });
+            Object.keys(descriptions).forEach((key) => {
+                if (!imageKeys.includes(key)) {
+                    delete descriptions[key];
+                }
+            });
 
-        // Sort keys alphabetically
-        const sortedDescriptions = Object.keys(descriptions)
-            .sort()
-            .reduce((acc, key) => {
-                acc[key] = descriptions[key];
-                return acc;
-            }, {});
+            const sortedDescriptions = Object.keys(descriptions)
+                .sort()
+                .reduce((acc, key) => {
+                    acc[key] = descriptions[key];
+                    return acc;
+                }, {});
 
-        fs.writeFileSync(
-            descriptionFile,
-            JSON.stringify(sortedDescriptions, null, 2) + "\n",
-            "utf8"
-        );
+            fs.writeFileSync(
+                descriptionFile,
+                JSON.stringify(sortedDescriptions, null, 2) + "\n",
+                "utf8"
+            );
+        }
+
+        if (mode === "products") {
+            imageKeys.forEach((key) => {
+                if (!(key in descriptions)) {
+                    descriptions[key] = {
+                        title: toTitleCaseFromKey(key),
+                        description: "",
+                        price: "",
+                    };
+                } else if (
+                    typeof descriptions[key] !== "object" ||
+                    descriptions[key] === null ||
+                    Array.isArray(descriptions[key])
+                ) {
+                    descriptions[key] = {
+                        title: toTitleCaseFromKey(key),
+                        description: "",
+                        price: "",
+                    };
+                } else {
+                    descriptions[key] = {
+                        title:
+                            typeof descriptions[key].title === "string"
+                                ? descriptions[key].title
+                                : toTitleCaseFromKey(key),
+                        description:
+                            typeof descriptions[key].description === "string"
+                                ? descriptions[key].description
+                                : "",
+                        price:
+                            typeof descriptions[key].price === "string"
+                                ? descriptions[key].price
+                                : "",
+                    };
+                }
+            });
+
+            Object.keys(descriptions).forEach((key) => {
+                if (!imageKeys.includes(key)) {
+                    delete descriptions[key];
+                }
+            });
+
+            const sortedDescriptions = Object.keys(descriptions)
+                .sort()
+                .reduce((acc, key) => {
+                    acc[key] = descriptions[key];
+                    return acc;
+                }, {});
+
+            fs.writeFileSync(
+                descriptionFile,
+                JSON.stringify(sortedDescriptions, null, 2) + "\n",
+                "utf8"
+            );
+        }
 
         console.log(`Synced: ${path.relative(process.cwd(), descriptionFile)}`);
     });
-
-    console.log("Gallery descriptions sync complete.");
 }
 
-syncDescriptions();
+function run() {
+    roots.forEach(({ base, mode }) => syncFolder(base, mode));
+    console.log("Gallery + products sync complete.");
+}
+
+run();
