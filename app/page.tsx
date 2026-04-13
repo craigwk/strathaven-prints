@@ -627,6 +627,7 @@ export default function Local3DPrintingSite() {
               className="mt-8 grid gap-4"
             >
               <input type="hidden" name="form_type" value="quote_request" />
+              <input type="hidden" name="_subject" value="New quote request – Strathaven Prints" />
 
               <input
                 name="name"
@@ -635,7 +636,7 @@ export default function Local3DPrintingSite() {
               />
 
               <input
-                name="contact"
+                name="_replyto"
                 placeholder="Email or phone"
                 className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
@@ -750,13 +751,15 @@ export default function Local3DPrintingSite() {
                 className="mt-6 grid gap-4"
               >
                 <input type="hidden" name="form_type" value="quick_question" />
+                <input type="hidden" name="_subject" value="New enquiry – Strathaven Prints" />
+
                 <input
                   name="name"
                   placeholder="Your name"
                   className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
                 />
                 <input
-                  name="contact"
+                  name="_replyto"
                   placeholder="Email or phone"
                   className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
                 />
