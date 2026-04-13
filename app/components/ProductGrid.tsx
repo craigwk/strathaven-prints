@@ -44,6 +44,11 @@ export default function ProductGrid({ items }: ProductGridProps) {
         if (!selectedData) return;
 
         const message = `I'd like to enquire about this product: ${selectedData.image.title} (${selectedData.category.category})${selectedData.image.price ? ` - ${selectedData.image.price}` : ""}.`;
+        const subjectInput = document.querySelector('input[name="_subject"]') as HTMLInputElement | null;
+
+        if (subjectInput) {
+            subjectInput.value = `[Product] Quote request – ${selectedData.image.title} (${selectedData.category.category})`;
+        }
 
         closeModal();
 
@@ -146,7 +151,7 @@ export default function ProductGrid({ items }: ProductGridProps) {
                                         <img
                                             src={item.src}
                                             alt={item.title}
-                                            className="h-40 w-full object-cover transition duration-500 group-hover/product:scale-[1.05]"
+                                            className="aspect-[4/3] w-full object-cover transition duration-500 group-hover/product:scale-[1.05]"
                                         />
 
                                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-0 transition duration-300 group-hover/product:opacity-100" />

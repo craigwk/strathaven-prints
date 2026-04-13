@@ -137,13 +137,13 @@ const productItems = fs.readdirSync(productsBase)
   );
 
 const services = [
-  "Custom 3D printed solutions",
-  "Replacement parts and fixes",
-  "Name personalised prints (signs, tags, gifts)",
+  "Custom CAD design for parts and solutions",
+  "3D printing of custom-designed parts",
   "Print STL files you already have or have found online",
-  "Personalise or adapt existing designs",
-  "Small design-to-print jobs",
-  "Local collection, delivery, and part pickup for reference",
+  "Modify and adapt existing designs to fit your needs",
+  "Replacement parts and fixes for broken items",
+  "Personalised prints (signs, tags, gifts)",
+  "Small design-to-print projects",
 ];
 
 export default function Local3DPrintingSite() {
@@ -235,11 +235,11 @@ export default function Local3DPrintingSite() {
               </div>
 
               <h1 className="max-w-3xl text-5xl font-bold leading-[0.9] md:text-7xl">
-                Custom parts, fixes, and personalised 3D prints.
+                Custom parts designed and 3D printed to solve real problems.
               </h1>
 
               <p className="mt-5 max-w-2xl text-lg font-medium leading-7 text-blue-100 md:text-xl">
-                From one-off problem-solving parts to prints from STL files, I help turn ideas, fixes, and replacements into finished parts that actually work.
+                From custom-designed parts to prints from STL files, I help turn ideas, fixes, and replacements into real, working solutions.
               </p>
 
               <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
@@ -264,6 +264,10 @@ export default function Local3DPrintingSite() {
 
               <div className="mt-5 flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-3 text-xs">
+
+                  <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
+                    CAD design + 3D printing
+                  </span>
                   <span className="rounded-full border border-blue-400/40 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-3 py-1 text-blue-200 backdrop-blur-sm">
                     Strong functional parts available
                   </span>
@@ -336,7 +340,7 @@ export default function Local3DPrintingSite() {
               I’m a local student heading into Computer Aided Draughting & Design, with a strong interest in design, making, and problem-solving. This started at home — fixing small issues, creating parts that didn’t exist, and improving everyday setups.
             </p>
             <p className="mt-4 text-slate-300">
-              The focus is simple: if something is broken, awkward, or just needs a better solution, I can design and print something that works. From practical fixes and replacement parts to personalised name prints and small custom projects.
+              The focus is simple: if something is broken, awkward, or just needs a better solution, I can design a custom part and print something that works.
             </p>
             <p className="mt-4 text-slate-300">
               It’s a straightforward, local service — just useful parts that do the job properly.
@@ -412,10 +416,12 @@ export default function Local3DPrintingSite() {
           <div className="relative">
             <div className="absolute -inset-4 rounded-3xl bg-blue-500/10 blur-2xl" />
             <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-500/25 to-sky-500/15 p-8 shadow-2xl backdrop-blur-md">
-              <h3 className="text-2xl font-bold">What can be printed?</h3>
+              <h3 className="text-2xl font-bold">What can be designed and made?</h3>
               <ul className="mt-5 space-y-3 text-slate-200">
+                <li>Custom-designed parts based on your problem or idea</li>
                 <li>STL files you already have</li>
                 <li>Models you’ve found online</li>
+                <li>Modified versions of existing designs</li>
                 <li>Personalised versions of existing designs</li>
                 <li>Replacement parts based on photos or a sample</li>
                 <li>Simple one-off ideas and prototypes</li>
@@ -452,7 +458,7 @@ export default function Local3DPrintingSite() {
 
           <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/20 to-fuchsia-500/15 p-8 shadow-2xl backdrop-blur-md">
             <h3 className="text-2xl font-bold">Helpful to know</h3>
-            <ul className="mt-5 space-y-4 text-slate-200">
+            <ul className="mt-5 space-y-3 text-sm text-slate-200 leading-6">
               {extras.map((item) => (
                 <li key={item}>{item}</li>
               ))}
@@ -708,12 +714,31 @@ export default function Local3DPrintingSite() {
             <div className="absolute -inset-4 rounded-3xl bg-indigo-500/10 blur-2xl" />
             <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-500/25 to-sky-500/15 p-8 shadow-2xl backdrop-blur-md">
               <h3 className="text-2xl font-bold">What helps get an accurate quote</h3>
-              <ul className="mt-5 space-y-4 text-slate-200">
-                <li>Photos or a sample of the part (can collect locally)</li>
-                <li>Link to a file, photo, or model if you have one (or send it after)</li>
-                <li>Rough size or dimensions</li>
-                <li>What the part needs to do (strength, fit, etc.)</li>
-                <li>Quantity and deadline</li>
+              <ul className="mt-5 space-y-3 text-sm text-slate-200 leading-6">
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-blue-300 flex-shrink-0" />
+                  <span>Photos or a sample of the part (can collect locally)</span>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-blue-300 flex-shrink-0" />
+                  <span>Link to a file, photo, or model if you have one (or send it after)</span>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-blue-300 flex-shrink-0" />
+                  <span>Rough size or dimensions</span>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-blue-300 flex-shrink-0" />
+                  <span>What the part needs to do (strength, fit, etc.)</span>
+                </li>
+
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-blue-300 flex-shrink-0" />
+                  <span>Quantity and deadline</span>
+                </li>
               </ul>
               <p className="mt-6 text-sm text-slate-300">
                 Don’t worry if you don’t have everything — even a rough idea is enough to get started.
@@ -783,7 +808,7 @@ export default function Local3DPrintingSite() {
               <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                 {/* Facebook Messenger */}
                 <a
-                  href="https://m.me/61586250437570"
+                  href="https://m.me/61572099393762"
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center gap-2 flex-1 rounded-2xl border border-blue-400/30 bg-blue-500/10 px-5 py-3 font-medium text-blue-100 transition hover:bg-blue-600 hover:text-white hover:-translate-y-0.5 active:scale-[0.98]"

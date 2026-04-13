@@ -42,12 +42,13 @@ export default function GalleryGrid({ items }: GalleryGridProps) {
     const enquireAboutImage = () => {
         if (!selectedData) return;
 
-        const formattedTitle = selectedData.image.title
-            .split("-")
-            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" ");
+        const message = `I'd like to enquire about this: ${selectedData.image.title} (${selectedData.category.category}).`;
 
-        const message = `I’d like to enquire about this example: ${formattedTitle} (${selectedData.category.category}).`;
+        const subjectInput = document.querySelector('input[name="_subject"]') as HTMLInputElement | null;
+
+        if (subjectInput) {
+            subjectInput.value = `[Gallery] Quote request – ${selectedData.image.title} (${selectedData.category.category})`;
+        }
 
         closeModal();
 
@@ -125,7 +126,7 @@ export default function GalleryGrid({ items }: GalleryGridProps) {
                 {items.map((category, categoryIndex) => (
                     <div
                         key={category.category}
-                        className="group cursor-pointer overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-blue-500/10"
+                        className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-blue-500/10"
                     >
                         <div className="flex overflow-x-auto gap-2 p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                             {category.images.map((img, imageIndex) => (
@@ -138,18 +139,18 @@ export default function GalleryGrid({ items }: GalleryGridProps) {
                                             imageIndex,
                                         })
                                     }
-                                    className="group relative flex-shrink-0 overflow-hidden rounded-xl focus:outline-none cursor-pointer"
+                                    className="group/product relative flex-shrink-0 overflow-hidden rounded-xl focus:outline-none cursor-pointer"
                                 >
                                     <img
                                         src={img.src}
                                         alt={img.title}
-                                        className="h-40 w-60 object-cover transition duration-500 ease-out group-hover:scale-[1.08] group-hover:shadow-xl"
+                                        className="h-40 w-60 object-cover transition duration-500 ease-out group-hover/product:scale-[1.05]"
                                     />
 
-                                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
+                                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-0 transition duration-300 group-hover/product:opacity-100" />
 
                                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                                        <span className="rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-medium text-white opacity-0 backdrop-blur-md transition duration-300 group-hover:opacity-100 group-hover:scale-100 scale-95">
+                                        <span className="scale-95 rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-medium text-white opacity-0 backdrop-blur-md transition duration-300 group-hover/product:scale-100 group-hover/product:opacity-100">
                                             View
                                         </span>
                                     </div>
