@@ -656,6 +656,13 @@ export default function Local3DPrintingSite() {
             >
               <input type="hidden" name="form_type" value="quote_request" />
               <input type="hidden" name="_subject" value="New quote request – Strathaven Prints" />
+              <input type="hidden" name="_redirect" value="https://strathavenprints.co.uk/thanks" />
+
+              <input
+                type="text"
+                name="_gotcha"
+                style={{ display: "none" }}
+              />
 
               <input
                 name="name"
@@ -800,8 +807,15 @@ export default function Local3DPrintingSite() {
                 method="POST"
                 className="mt-6 grid gap-4"
               >
-                <input type="hidden" name="form_type" value="quick_question" />
-                <input type="hidden" name="_subject" value="New enquiry – Strathaven Prints" />
+                <input type="hidden" name="form_type" value="quote_request" />
+                <input type="hidden" name="_subject" value="New quote request – Strathaven Prints" />
+                <input type="hidden" name="_redirect" value="https://strathavenprints.co.uk/thanks" />
+
+                <input
+                  type="text"
+                  name="_gotcha"
+                  style={{ display: "none" }}
+                />
 
                 <input
                   name="name"
