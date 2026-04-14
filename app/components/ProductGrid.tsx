@@ -44,10 +44,11 @@ export default function ProductGrid({ items }: ProductGridProps) {
         if (!selectedData) return;
 
         const message = `I'd like to enquire about this product: ${selectedData.image.title} (${selectedData.category.category})${selectedData.image.price ? ` - ${selectedData.image.price}` : ""}.`;
+
         const subjectInput = document.querySelector('input[name="_subject"]') as HTMLInputElement | null;
 
         if (subjectInput) {
-            subjectInput.value = `[Product] Quote request – ${selectedData.image.title} (${selectedData.category.category})`;
+            subjectInput.value = `Quote request – ${selectedData.image.title} (${selectedData.category.category})`;
         }
 
         closeModal();
@@ -123,35 +124,37 @@ export default function ProductGrid({ items }: ProductGridProps) {
     return (
         <>
             <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-                {items.map((category, categoryIndex) => (
-                    <div
-                        key={category.category}
-                        className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-blue-500/10"
-                    >
-                        <div className="p-5">
-                            <div className="text-xs uppercase tracking-wide text-blue-300">
-                                {category.category}
-                            </div>
-                        </div>
+                {items.map((category, categoryIndex) => {
+                    const coverImage = category.images[0];
+                    if (!coverImage) return null;
 
-                        <div className="grid gap-6 px-5 pb-5">
-                            {category.images.map((item, imageIndex) => (
+                    return (
+                        <div
+                            key={category.category}
+                            className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-blue-500/10"
+                        >
+                            <div className="p-5">
+                                <div className="text-xs uppercase tracking-wide text-blue-300">
+                                    {category.category}
+                                </div>
+                            </div>
+
+                            <div className="px-5 pb-5">
                                 <button
-                                    key={item.src}
                                     type="button"
                                     onClick={() =>
                                         setSelected({
                                             categoryIndex,
-                                            imageIndex,
+                                            imageIndex: 0,
                                         })
                                     }
-                                    className="group/product overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-left shadow-xl transition duration-300 hover:-translate-y-1 hover:border-white/20 focus:outline-none"
+                                    className="group/product w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-left shadow-xl transition duration-300 hover:-translate-y-1 hover:border-white/20 focus:outline-none"
                                 >
                                     <div className="relative overflow-hidden">
                                         <img
-                                            src={item.src}
-                                            alt={item.title}
-                                            className="aspect-[4/3] w-full object-cover transition duration-500 group-hover/product:scale-[1.05]"
+                                            src={coverImage.src}
+                                            alt={coverImage.title}
+                                            className="h-40 w-full object-cover transition duration-500 group-hover/product:scale-[1.05]"
                                         />
 
                                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-0 transition duration-300 group-hover/product:opacity-100" />
@@ -165,14 +168,14 @@ export default function ProductGrid({ items }: ProductGridProps) {
 
                                     <div className="p-4 transition duration-300 group-hover/product:bg-white/[0.02]">
                                         <p className="text-sm text-slate-300">
-                                            Click an image to enlarge.
+                                            Click to view product photos.
                                         </p>
                                     </div>
                                 </button>
-                            ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {selected && selectedData && (
@@ -206,14 +209,39 @@ export default function ProductGrid({ items }: ProductGridProps) {
                                 key={selectedData.image.src}
                                 src={selectedData.image.src}
                                 alt={selectedData.image.title}
-                                className="animate-fadeIn max-h-[80vh] max-w-full rounded-2xl border border-white/10 object-contain shadow-2xl"
+                                className="animate-fadeIn max-h-[58vh] max-w-full rounded-2xl border border-white/10 object-contain shadow-2xl"
                             />
+
+                            <div className="mt-4 flex max-w-3xl gap-3 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                                {selectedData.category.images.map((img, thumbIndex) => (
+                                    <button
+                                        key={img.src}
+                                        type="button"
+                                        onClick={() =>
+                                            setSelected({
+                                                categoryIndex: selected.categoryIndex,
+                                                imageIndex: thumbIndex,
+                                            })
+                                        }
+                                        className={`overflow-hidden rounded-xl border transition ${thumbIndex === selected.imageIndex
+                                            ? "border-blue-400 shadow-lg shadow-blue-500/20"
+                                            : "border-white/10 hover:border-white/20"
+                                            }`}
+                                        aria-label={`View product image ${thumbIndex + 1}`}
+                                    >
+                                        <img
+                                            src={img.src}
+                                            alt={img.title}
+                                            className="h-16 w-24 object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
 
                             <div className="mt-4 text-center">
                                 <div className="text-xs uppercase tracking-wide text-blue-300">
                                     {selectedData.category.category}
                                 </div>
-
 
                                 {selectedData.image.description && (
                                     <p className="mt-3 max-w-xl text-center text-sm text-slate-300">

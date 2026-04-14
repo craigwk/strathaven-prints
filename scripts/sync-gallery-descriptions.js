@@ -70,17 +70,27 @@ function syncFolder(basePath, mode) {
             });
 
             Object.keys(descriptions).forEach((key) => {
+                if (key === "_coverImage") {
+                    return;
+                }
+
                 if (!imageKeys.includes(key)) {
                     delete descriptions[key];
                 }
             });
 
-            const sortedDescriptions = Object.keys(descriptions)
+            const sortedDescriptions = {};
+
+            if (typeof descriptions._coverImage === "string") {
+                sortedDescriptions._coverImage = descriptions._coverImage;
+            }
+
+            Object.keys(descriptions)
+                .filter((key) => key !== "_coverImage")
                 .sort()
-                .reduce((acc, key) => {
-                    acc[key] = descriptions[key];
-                    return acc;
-                }, {});
+                .forEach((key) => {
+                    sortedDescriptions[key] = descriptions[key];
+                });
 
             fs.writeFileSync(
                 descriptionFile,

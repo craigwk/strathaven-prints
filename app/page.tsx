@@ -3,6 +3,8 @@ import path from "path";
 import GalleryGrid from "./components/GalleryGrid";
 import ProductGrid from "./components/ProductGrid";
 
+const SHOW_PRODUCTS = false;
+const SHOW_GALLERY = false;
 
 // VERSION: v1 - first stable build (FULL CLEAN RESET)
 
@@ -74,8 +76,8 @@ const productItems = fs.readdirSync(productsBase)
 
     let descriptions: Record<
       string,
-      { title?: string; description?: string; price?: string }
-    > = {};
+      { title?: string; description?: string; price?: string } | string
+    > & { _coverImage?: string } = {};
 
     if (fs.existsSync(descriptionsPath)) {
       try {
@@ -83,34 +85,47 @@ const productItems = fs.readdirSync(productsBase)
           fs.readFileSync(descriptionsPath, "utf8")
         ) as Record<
           string,
-          { title?: string; description?: string; price?: string }
-        >;
+          { title?: string; description?: string; price?: string } | string
+        > & { _coverImage?: string };
       } catch {
         descriptions = {};
       }
     }
+
+    const coverImageKey =
+      typeof descriptions._coverImage === "string"
+        ? descriptions._coverImage
+        : "";
 
     const images = fs
       .readdirSync(folderPath)
       .filter((file) => /\.(jpg|jpeg|png|webp)$/i.test(file))
       .map((file) => {
         const key = file.replace(/\.[^/.]+$/, "");
-        const meta = descriptions[key] || {};
+        const rawMeta = descriptions[key];
+        const meta =
+          typeof rawMeta === "object" && rawMeta !== null ? rawMeta : {};
 
         return {
           src: `/products/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`,
+          key,
           title:
             typeof meta.title === "string" && meta.title.trim()
               ? meta.title
               : key,
           description:
             typeof meta.description === "string" ? meta.description : "",
-          price:
-            typeof meta.price === "string" ? meta.price : "",
+          price: typeof meta.price === "string" ? meta.price : "",
         };
       });
 
     if (images.length === 0) return null;
+
+    const sortedImages = [...images].sort((a, b) => {
+      if (a.key === coverImageKey) return -1;
+      if (b.key === coverImageKey) return 1;
+      return 0;
+    });
 
     const category = folder
       .split("-")
@@ -119,7 +134,7 @@ const productItems = fs.readdirSync(productsBase)
 
     return {
       category,
-      images,
+      images: sortedImages.map(({ key, ...rest }) => rest),
     };
   })
   .filter(
@@ -246,6 +261,10 @@ export default function Local3DPrintingSite() {
                 Ideal for broken clips, custom-fit parts, replacement pieces, personalised prints, and simple prototypes — all printed locally with straightforward advice and quick turnaround.
               </p>
 
+              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
+                Need a part designed as well as printed? I can model it from scratch, recreate broken components, or adapt existing designs to fit perfectly.
+              </p>
+
               <div className="mt-8 flex flex-wrap gap-4">
                 <a
                   href="#quote"
@@ -254,12 +273,9 @@ export default function Local3DPrintingSite() {
                   Get a quote
                 </a>
 
-                <a
-                  href="#gallery"
-                  className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-medium text-white transition hover:bg-white/10"
-                >
-                  View examples
-                </a>
+                <span className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-medium text-white/70">
+                  Example gallery coming soon
+                </span>
               </div>
 
               <div className="mt-5 flex flex-col gap-3">
@@ -281,7 +297,9 @@ export default function Local3DPrintingSite() {
                     Print models you find online
                   </span>
                 </div>
-
+                <p className="mt-3 text-sm text-blue-200/80">
+                  CAD design available — ideal for custom parts, prototypes, and one-off fixes.
+                </p>
                 <div className="max-w-md text-sm leading-6 text-slate-300">
                   Used for clips, brackets, mounts, covers and everyday parts that need to do the job properly.
                 </div>
@@ -496,44 +514,48 @@ export default function Local3DPrintingSite() {
         </div>
       </section>
 
-      <section className="relative mx-auto max-w-6xl px-6 py-12">
-        <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
-              Products
-            </p>
-            <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
-              Ready to order
-            </h2>
-          </div>
-
-          <p className="max-w-2xl text-slate-300">
-            A selection of common items I can make quickly and customise. If you’ve seen something similar, just ask.
-          </p>
-        </div>
-
-        <ProductGrid items={productItems} />
-      </section>
-
-      <section id="gallery" className="relative mx-auto max-w-6xl px-6 py-12">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(96,165,250,0.06),transparent_35%)]" />
-
-        <div className="relative">
+      {SHOW_PRODUCTS && (
+        <section className="relative mx-auto max-w-6xl px-6 py-12">
           <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Gallery</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
+                Products
+              </p>
               <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
-                Examples of work
+                Ready to order
               </h2>
             </div>
+
             <p className="max-w-2xl text-slate-300">
-              Real examples of finished prints, problem-solving parts, and before-and-after fixes.
+              A selection of common items I can make quickly and customise. If you’ve seen something similar, just ask.
             </p>
           </div>
 
-          <GalleryGrid items={galleryItems} />
-        </div>
-      </section>
+          <ProductGrid items={productItems} />
+        </section>
+      )}
+
+      {SHOW_GALLERY && (
+        <section id="gallery" className="relative mx-auto max-w-6xl px-6 py-12">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(96,165,250,0.06),transparent_35%)]" />
+
+          <div className="relative">
+            <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-200">Gallery</p>
+                <h2 className="mt-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-3xl font-bold text-transparent">
+                  Examples of work
+                </h2>
+              </div>
+              <p className="max-w-2xl text-slate-300">
+                Real examples of finished prints, problem-solving parts, and before-and-after fixes.
+              </p>
+            </div>
+
+            <GalleryGrid items={galleryItems} />
+          </div>
+        </section>
+      )}
 
       <section className="relative mx-auto max-w-6xl px-6 py-12">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(96,165,250,0.08),transparent_35%)]" />
@@ -638,19 +660,22 @@ export default function Local3DPrintingSite() {
               <input
                 name="name"
                 placeholder="Your name"
+                required
                 className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
               <input
                 name="_replyto"
                 placeholder="Email or phone"
+                required
                 className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
               <textarea
                 id="job_description"
                 name="job_description"
-                placeholder="What do you need made? Add a model link, file, photo, or rough description if you have one."
+                placeholder="Tell me what you need — whether it's a part you already have, something broken, or just an idea. I can help design and print a solution."
+                required
                 className="h-28 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
@@ -767,7 +792,7 @@ export default function Local3DPrintingSite() {
             <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500 to-indigo-500 p-8 text-white shadow-2xl">
               <h3 className="text-2xl font-bold">Ask a quick question</h3>
               <p className="mt-4 text-blue-50">
-                Not ready for a full quote? Send a quick message and I’ll get back to you. If Facebook Messenger or WhatsApp is easier, that works too.
+                Not sure what you need yet? Send a quick message — whether it's a rough idea, a broken part, or a design question. I’ll point you in the right direction.
               </p>
 
               <form
@@ -781,16 +806,19 @@ export default function Local3DPrintingSite() {
                 <input
                   name="name"
                   placeholder="Your name"
+                  required
                   className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
                 />
                 <input
                   name="_replyto"
                   placeholder="Email or phone"
+                  required
                   className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
                 />
                 <textarea
                   name="message"
                   placeholder="Ask a question or describe what you need"
+                  required
                   className="h-32 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-2 focus:ring-white/40"
                 />
                 <button
