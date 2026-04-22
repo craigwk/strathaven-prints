@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+input,
+textarea {
+  caret-color: #60a5fa;
+  /* Tailwind blue-400 */
+}
+
 :root {
   --background: #0f172a;
   --foreground: #ededed;

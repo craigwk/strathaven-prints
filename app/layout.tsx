@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Sora } from "next/font/google";
+import { Libre_Baskerville } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const libreBaskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-serif",
+});
+
 export const metadata: Metadata = {
   title: "Custom 3D Printing in Strathaven | Parts, Repairs & Bespoke Prints",
   description: "Local 3D printing service in Strathaven. Custom parts, replacement components, STL printing and personalised designs. Fast turnaround and local delivery.",
@@ -30,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} ${libreBaskerville.variable} h-full antialiased`}
     >
 
       <body className="min-h-full flex flex-col bg-[radial-gradient(circle_at_top,_#1e1b4b,_#111827_45%,_#0f172a_100%)] text-white">
